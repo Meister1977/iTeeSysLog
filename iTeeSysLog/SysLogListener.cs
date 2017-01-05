@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -55,7 +56,9 @@ namespace iTeeSysLog
             { 
                 _listenerThread.Abort();
             }
+            _listenerThread = null;
             _udpListener.Close();
+            _udpListener = null;
         }
     }
 }

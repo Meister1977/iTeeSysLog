@@ -8,6 +8,8 @@ namespace iTeeSysLog
     public partial class Form1 : Form
     {
         private bool _isTextBoxAttached;
+
+        private string logFilePath = Application.StartupPath;
         public Form1()
         {
             InitializeComponent();
@@ -32,7 +34,7 @@ namespace iTeeSysLog
         {
             var watch = new FileSystemWatcher
                         {
-                            Path = @"C:\Users\Lőrinc\Desktop",
+                            Path = logFilePath,
                             Filter = "SysLog.log",
                             NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite
                         };
@@ -42,7 +44,7 @@ namespace iTeeSysLog
 
         private void OnLogFileChanged(object sender, FileSystemEventArgs e)
         {
-            if (e.FullPath == @"C:\Users\Lőrinc\Desktop\SysLog.log")
+            if (e.FullPath == logFilePath + @"\SysLog.log")
             {
                 // do stuff
             }
@@ -53,6 +55,11 @@ namespace iTeeSysLog
             button1.Enabled = !button1.Enabled;
             button2.Enabled = !button2.Enabled;
             SysLogListener.Stop();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start(logFilePath + @"\SysLog.log");
         }
     }
 
@@ -88,8 +95,8 @@ namespace iTeeSysLog
         {
             if (_textBox == null)
             {
-                if (String.IsNullOrEmpty(FormName) ||
-                    String.IsNullOrEmpty(TextBoxName))
+                if (string.IsNullOrEmpty(FormName) ||
+                    string.IsNullOrEmpty(TextBoxName))
                     return;
 
                 Form form = Application.OpenForms[FormName];
