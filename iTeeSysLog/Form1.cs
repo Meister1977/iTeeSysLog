@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using log4net.Appender;
 
@@ -9,15 +10,10 @@ namespace iTeeSysLog
     {
         private bool _isTextBoxAttached;
 
-        private string logFilePath = Application.StartupPath;
+        private readonly string _logFilePath = Application.StartupPath;
         public Form1()
         {
             InitializeComponent();
-        }
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -34,7 +30,7 @@ namespace iTeeSysLog
         {
             var watch = new FileSystemWatcher
                         {
-                            Path = logFilePath,
+                            Path = _logFilePath,
                             Filter = "SysLog.log",
                             NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite
                         };
@@ -44,7 +40,7 @@ namespace iTeeSysLog
 
         private void OnLogFileChanged(object sender, FileSystemEventArgs e)
         {
-            if (e.FullPath == logFilePath + @"\SysLog.log")
+            if (e.FullPath == _logFilePath + @"\SysLog.log")
             {
                 // do stuff
             }
@@ -59,7 +55,7 @@ namespace iTeeSysLog
 
         private void button3_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start(logFilePath + @"\SysLog.log");
+            System.Diagnostics.Process.Start(_logFilePath + @"\SysLog.log");
         }
     }
 
@@ -80,15 +76,10 @@ namespace iTeeSysLog
         public string FormName { get; set; }
         public string TextBoxName { get; set; }
 
-        private Control FindControlRecursive(Control root, string textBoxName)
+        private static Control FindControlRecursive(Control root, string textBoxName)
         {
             if (root.Name == textBoxName) return root;
-            foreach (Control c in root.Controls)
-            {
-                Control t = FindControlRecursive(c, textBoxName);
-                if (t != null) return t;
-            }
-            return null;
+            return (from Control c in root.Controls select FindControlRecursive(c, textBoxName)).FirstOrDefault(t => t != null);
         }
 
         protected override void Append(log4net.Core.LoggingEvent loggingEvent)
@@ -99,7 +90,7 @@ namespace iTeeSysLog
                     string.IsNullOrEmpty(TextBoxName))
                     return;
 
-                Form form = Application.OpenForms[FormName];
+                var form = Application.OpenForms[FormName];
                 if (form == null)
                     return;
 
