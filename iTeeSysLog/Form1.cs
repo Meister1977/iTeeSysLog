@@ -61,18 +61,8 @@ namespace iTeeSysLog
 
     public class TextBoxAppender : AppenderSkeleton
     {
-        private TextBox _textBox;
-        public TextBox AppenderTextBox
-        {
-            get
-            {
-                return _textBox;
-            }
-            set
-            {
-                _textBox = value;
-            }
-        }
+        public TextBox AppenderTextBox { get; set; }
+
         public string FormName { get; set; }
         public string TextBoxName { get; set; }
 
@@ -84,7 +74,7 @@ namespace iTeeSysLog
 
         protected override void Append(log4net.Core.LoggingEvent loggingEvent)
         {
-            if (_textBox == null)
+            if (AppenderTextBox == null)
             {
                 if (string.IsNullOrEmpty(FormName) ||
                     string.IsNullOrEmpty(TextBoxName))
@@ -94,15 +84,15 @@ namespace iTeeSysLog
                 if (form == null)
                     return;
 
-                _textBox = (TextBox)FindControlRecursive(form, TextBoxName);
-                if (_textBox == null)
+                AppenderTextBox = (TextBox)FindControlRecursive(form, TextBoxName);
+                if (AppenderTextBox == null)
                     return;
 
-                form.FormClosing += (s, e) => _textBox = null;
+                form.FormClosing += (s, e) => AppenderTextBox = null;
             }
-            _textBox.BeginInvoke((MethodInvoker)delegate
+            AppenderTextBox.BeginInvoke((MethodInvoker)delegate
             {
-                _textBox.AppendText(RenderLoggingEvent(loggingEvent));
+                AppenderTextBox.AppendText(RenderLoggingEvent(loggingEvent));
             });
         }
     }

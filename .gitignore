@@ -1,3 +1,5 @@
 iTeeSysLog/obj/
 packages/
 iTeeSysLog/bin/
+/.vs/iTeeSysLog
+*.user
